@@ -12,13 +12,13 @@ print(f"Using device: {device}")
 
 models = {
     "gemma2-9b": "/storage/ukp/shared/shared_model_weights/models--google--gemma-2-9b-it",
-    "phi-3-mini": "/storage/ukp/shared/shared_model_weights/models--microsoft--phi-3-mini-128k-instruct",
+    "phi-3mini": "/storage/ukp/shared/shared_model_weights/models--microsoft--phi-3-mini-128k-instruct",
     "llama31-8b": "/storage/ukp/shared/shared_model_weights/models--llama-3.1/hf/8B-Instruct",
 }
 
 output_files = {
     "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/xstest_v2_completions_gemma2-9b.csv",
-    "phi-3mini": "/ukp-storage-1/zadorin/spt_llms/xstest_v2_completions_phi3mini.csv",
+    "phi-3mini": "/ukp-storage-1/zadorin/spt_llms/xstest_v2_completions_phi-3mini.csv",
     "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/xstest_v2_completions_llama31-8b.csv",
 }
 
