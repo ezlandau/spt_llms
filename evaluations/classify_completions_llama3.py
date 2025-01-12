@@ -1,8 +1,6 @@
 import pandas as pd
-from vllm import LLM, SamplingParams
-import torch
 from tqdm import tqdm
-import time
+from vllm import LLM, SamplingParams
 
 tqdm.pandas()
 
@@ -65,8 +63,8 @@ if __name__ == "__main__":
     models = ["gemma2-9b", "llama31-8b", "phi3mini"]
 
     for model in models:
-        INPUT_PATH = f"./xstest_v2_completions_{model}.csv"
-        OUTPUT_PATH = f"./xstest_automated_evaluations_labels/xstest_v2_completions_{model}_eval.csv"
+        INPUT_PATH = f"./completions_{model}.csv"
+        OUTPUT_PATH = f"./automated_evaluations/completions_{model}_eval.csv"
 
         print(f"Processing model: {model}")
         main(INPUT_PATH, OUTPUT_PATH)

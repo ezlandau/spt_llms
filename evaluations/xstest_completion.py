@@ -17,9 +17,9 @@ models = {
 }
 
 output_files = {
-    "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/xstest_v2_completions_gemma2-9b.csv",
-    "phi-3mini": "/ukp-storage-1/zadorin/spt_llms/xstest_v2_completions_phi-3mini.csv",
-    "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/xstest_v2_completions_llama31-8b.csv",
+    "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/completions_gemma2-9b.csv",
+    "phi-3mini": "/ukp-storage-1/zadorin/spt_llms/completions_phi-4mini.csv",
+    "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/completions_llama31-8b.csv",
 }
 
 input_file = "/ukp-storage-1/zadorin/spt_llms/evaluations/xstest_v2_prompts.csv"
