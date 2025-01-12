@@ -13,7 +13,6 @@
 #SBATCH --time=3-00:00:00
 #SBATCH --nodelist=penelope
 
-# Load your custom bash settings
 source /ukp-storage-1/zadorin/.bashrc
 
 export HF_TOKEN="HF_TOKEN"

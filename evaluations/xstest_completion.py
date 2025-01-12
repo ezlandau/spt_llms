@@ -12,14 +12,14 @@ print(f"Using device: {device}")
 
 models = {
     "gemma2-9b": "/storage/ukp/shared/shared_model_weights/models--google--gemma-2-9b-it",
-    "phi-3mini": "/storage/ukp/shared/shared_model_weights/models--microsoft--phi-3-mini-128k-instruct",
+    "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/weights/phi-4",
     "llama31-8b": "/storage/ukp/shared/shared_model_weights/models--llama-3.1/hf/8B-Instruct",
 }
 
 output_files = {
-    "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/completions_gemma2-9b.csv",
-    "phi-3mini": "/ukp-storage-1/zadorin/spt_llms/completions_phi-4mini.csv",
-    "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/completions_llama31-8b.csv",
+    "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/evaluations/completions_gemma2-9b.csv",
+    "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/evaluations/completions_phi-4.csv",
+    "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/evaluations/completions_llama31-8b.csv",
 }
 
 input_file = "/ukp-storage-1/zadorin/spt_llms/evaluations/xstest_v2_prompts.csv"
@@ -32,8 +32,8 @@ system_prompt = (
 )
 
 def generate_responses_vllm(model_name, model_path, data):
-    # max_model_len adjusted for phi-3mini to prevent memory issues
-    max_model_len = 73472 if "phi-3mini" in model_name else None
+    # max_model_len adjusted for phi-4 to prevent memory issues
+    max_model_len = 16384 if "phi-4-14b" in model_name else None
 
     llm = LLM(
         model_path,
@@ -51,10 +51,10 @@ def generate_responses_vllm(model_name, model_path, data):
     ).tolist()
 
     sampling_params = SamplingParams(
-        max_tokens=256,
-        temperature=0,  # Deterministic generation
+        max_tokens=512,
+        temperature=0,  # Deterministic output
         top_p=1.0,
-        top_k=-1
+        top_k=1  # Greedy decoding
     )
 
     responses = llm.generate(prompts, sampling_params)
