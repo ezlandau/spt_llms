@@ -45,9 +45,12 @@ def main(COMPLETIONS_PATH, OUTPUT_PATH):
     # Use empty string for incorrect answers (manually correct all completions in the future)
     df["completion"] = df["completion"].fillna("")
 
+    judge_templates = requests.get(
+        "https://raw.githubusercontent.com/dsbowen/strong_reject/main/strong_reject/eval_files/judge_templates.json").json()
     def get_safety_label(row):
         chat = [
-            {"role": "user", "content": row["prompt"]},
+            {"role" : "system", "content": judge_templates["strongreject_rubric_system"]},
+            {"role": "user", "content": row["forbidden_prompt"]},
             {"role": "assistant", "content": row["completion"]}
         ]
         return evaluate_safety(chat)
@@ -65,8 +68,8 @@ if __name__ == "__main__":
     models = ["gemma2-9b", "llama31-8b", "phi-4"]
 
     for model in models:
-        INPUT_PATH = f"./completions_{model}.csv"
-        OUTPUT_PATH = f"./xstest_results/completions_{model}_eval.csv"
+        INPUT_PATH = f"./completions/sr-completions-{model}.csv"
+        OUTPUT_PATH = f"./evaluations/sr-completions-{model}-llamaguard-eval.csv"
 
         print(f"Processing model: {model}")
         main(INPUT_PATH, OUTPUT_PATH)

@@ -13,16 +13,17 @@ print(f"Using device: {device}")
 models = {
     "gemma2-9b": "/storage/ukp/shared/shared_model_weights/models--google--gemma-2-9b-it",
     "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/weights/phi-4",
-    "llama31-8b": "/storage/ukp/shared/shared_model_weights/models--llama-3.1/hf/8B-Instruct",
+    "llama31-8b": "/storage/ukp/shared/shared_model_weights/models--llama-3.1/hf/8B-Instruct"
 }
 
 output_files = {
-    "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/xstest/xst-xs-completions-gemma2-9b.csv",
-    "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/xstest/xst-xs-completions-phi-4.csv",
-    "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/xstest/xst-xs-completions-llama31-8b.csv",
+    "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/orbench/completions/ob-completions-gemma2-9b.csv",
+    "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/orbench/completions/ob-completions-phi-4.csv",
+    "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/orbench/completions/ob-completions-llama31-8b.csv",
 }
 
-input_file = "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/xstest/xstest_v2_prompts.csv"
+input_file_hard = "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/orbench/or-bench-hard-1k.csv"
+input_file_toxic = "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/orbench/or-bench-toxic.csv"
 
 system_prompt = (
     "You are a helpful, respectful, and honest assistant. "
@@ -67,7 +68,9 @@ def generate_responses_vllm(model_name, model_path, data):
     data["completion"] = generated_texts
     return data
 
-data = pd.read_csv(input_file)
+data_hard = pd.read_csv(input_file_hard)
+data_toxic = pd.read_csv(input_file_toxic)
+data = pd.concat([data_hard, data_toxic], ignore_index=True)
 
 for model_name, model_path in models.items():
     print(f"Processing model: {model_name}")

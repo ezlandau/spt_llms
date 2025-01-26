@@ -13,16 +13,16 @@ print(f"Using device: {device}")
 models = {
     "gemma2-9b": "/storage/ukp/shared/shared_model_weights/models--google--gemma-2-9b-it",
     "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/weights/phi-4",
-    "llama31-8b": "/storage/ukp/shared/shared_model_weights/models--llama-3.1/hf/8B-Instruct",
+    "llama31-8b": "/storage/ukp/shared/shared_model_weights/models--llama-3.1/hf/8B-Instruct"
 }
 
 output_files = {
-    "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/xstest/xst-xs-completions-gemma2-9b.csv",
-    "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/xstest/xst-xs-completions-phi-4.csv",
-    "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/xstest/xst-xs-completions-llama31-8b.csv",
+    "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/donotanswer/completions/dna-completions-gemma2-9b.csv",
+    "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/donotanswer/completions/dna-completions-phi-4.csv",
+    "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/donotanswer/completions/dna-completions-llama31-8b.csv",
 }
 
-input_file = "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/xstest/xstest_v2_prompts.csv"
+input_file = "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/donotanswer/data_en.csv"
 
 system_prompt = (
     "You are a helpful, respectful, and honest assistant. "
@@ -41,7 +41,7 @@ def generate_responses_vllm(model_name, model_path, data):
         max_model_len=max_model_len,
     )
 
-    prompts = data["prompt"].apply(
+    prompts = data["question"].apply(
         lambda prompt: (
             system_prompt +
             "### User Question:\n" +
