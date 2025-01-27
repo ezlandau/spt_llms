@@ -16,15 +16,18 @@ models = {
     "llama31-8b": "/storage/ukp/shared/shared_model_weights/models--llama-3.1/hf/8B-Instruct"
 }
 
-
-
 output_files = {
     "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/advbench/completions/ab-completions-gemma2-9b.csv",
     "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/advbench/completions/ab-completions-phi-4.csv",
     "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/advbench/completions/ab-completions-llama31-8b.csv",
 }
 
-input_file = "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/advbench/harmful???.csv"
+# Advbench dataset augmented with jailbreak prompts generated with this code: https://github.com/UKPLab/arxiv2025-poate-attack/blob/main/poate_attack/attacks/jailbreak/gcg/nano_gcg_hf.py
+input_files = {
+    "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/advbench/gcg_attack_gemma2_9b_it_advbench_outputs.csv",
+    "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/advbench/gcg_attack_phi_3_mini_4k_advbench_outputs.csv",
+    "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/eval_pipeline/advbench/gcg_attack_llama_3.1_8b_instruct_advbench_outputs.csv"
+}
 
 system_prompt = (
     "You are a helpful, respectful, and honest assistant. "
@@ -43,7 +46,7 @@ def generate_responses_vllm(model_name, model_path, data):
         max_model_len=max_model_len,
     )
 
-    prompts = data["forbidden_prompt"].apply(
+    prompts = data["jailbreak_prompt"].apply(
         lambda prompt: (
             system_prompt +
             "### User Question:\n" +
@@ -69,9 +72,9 @@ def generate_responses_vllm(model_name, model_path, data):
     data["completion"] = generated_texts
     return data
 
-data = pd.read_csv(input_file)
-
 for model_name, model_path in models.items():
+    input_file = input_files[model_name]
+    data = pd.read_csv(input_file)
     print(f"Processing model: {model_name}")
     output_file = output_files[model_name]
 
