@@ -18,7 +18,7 @@ print(f"Using device: {device}")
 models = {
     "gemma2-9b": "/storage/ukp/shared/shared_model_weights/models--google--gemma-2-9b-it",
     "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/weights/phi-4",
-    "llama31-8b": "/storage/ukp/shared/shared_model_weights/models--llama-3/8B-Instruct" # maybe change to just Llama3
+    "llama31-8b": "/storage/ukp/shared/shared_model_weights/models--llama-3.1/hf/8B-Instruct"
 }
 
 benchmarks = {

@@ -145,14 +145,14 @@ print(f"Total Accuracy: {correct / total:.3f}")
 #
 #         outputs = model.generate([formatted_prompt], sampling_params)
 #         generated_text = outputs[0].outputs[0].text.strip()
-#         print("Raw output:\n", outputs)  # Debug
-#
-#         if self.benchmark == "MMLU":
-#             match = re.search(r'\b([A-D])\b', generated_text)
-#             return match.group(1).upper() if match else generated_text
-#         if self.benchmark == "GSM8K":
-#             match = re.search(r'The answer is (-?[0-9.,]*[0-9]+)', generated_text)
-#             return match.group(1) if match else generated_text
+        print("Raw output:\n", outputs)  # Debug
+
+        if self.benchmark == "MMLU":
+            match = re.search(r'\b([A-D])\b', generated_text)
+            return match.group(1).upper() if match else generated_text
+        if self.benchmark == "GSM8K":
+            match = re.search(r'The answer is (-?[0-9.,]*[0-9]+)', generated_text)
+            return match.group(1) if match else generated_text
 #
 #     async def a_generate(self, prompt: str) -> str:
 #         return self.generate(prompt)
