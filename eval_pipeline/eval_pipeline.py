@@ -21,7 +21,7 @@ DEVICE = "cuda"
 
 MODELS = {
     "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/weights/gemma-2-9b-it",
-    "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/weights/Phi-3-small-128k-instruct",
+    # "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/weights/phi-4",
     "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/weights/Llama-3.1-8B-Instruct"
 }
 
@@ -34,7 +34,7 @@ SYSTEM_PROMPTS = {
     ),
     "phi-4-14b": (
         "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. "
-        "Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, "
+        "Please ensure that your responses are sociLLMally unbiased and positive in nature. If a question does not make any sense, "
         "or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, "
         "please don't share false information."
     ),
@@ -77,21 +77,21 @@ BENCHMARKS = {
         "evaluation": "./evaluations/sr-{defense}-{model}-eval.csv",
         "prompt_col": "forbidden_prompt"
     },
-    "or-bench-hard-1k": {
-        "input": "./data/obh.csv",
-        "completion": "./completions/obh-{defense}-{model}.csv",
-        "evaluation": "./evaluations/obh-{defense}-{model}-eval.csv",
-        "prompt_col": "prompt"
-    },
-    "xstest-safe": {
-        "input": "./data/xss.csv",
-        "completion": "./completions/xss-{defense}-{model}.csv",
-        "evaluation": "./evaluations/xss-{defense}-{model}-eval.csv",
-        "prompt_col": "prompt"
-    }
+    # "or-bench-hard-1k": {
+    #     "input": "./data/obh.csv",
+    #     "completion": "./completions/obh-{defense}-{model}.csv",
+    #     "evaluation": "./evaluations/obh-{defense}-{model}-eval.csv",
+    #     "prompt_col": "prompt"
+    # },
+    # "xstest-safe": {
+    #     "input": "./data/xss.csv",
+    #     "completion": "./completions/xss-{defense}-{model}.csv",
+    #     "evaluation": "./evaluations/xss-{defense}-{model}-eval.csv",
+    #     "prompt_col": "prompt"
+    # }
 }
 
-DEFENSES = ["", "SmoothLLM"]
+DEFENSES = ["smoothllm"]
 
 def create_prompt(prompt: str, model_name: str, output: str = None) -> str:
     """
@@ -163,7 +163,6 @@ def smoothllm_responses(smoothllm_instance, model_name: str, data: pd.DataFrame,
     for i, prompt in tqdm(enumerate(prompts), total=len(prompts), desc="Processing SmoothLLM responses"):
         full_prompt = Prompt(create_prompt(prompt, model_name), prompt, 512)
         _, _, output = smoothllm_instance(full_prompt)
-        print(output)
         generated_texts[i] = output
     data["completion"] = generated_texts
     return data
@@ -174,7 +173,7 @@ def process_evaluation(benchmark: str, defense: str, model: str, completions_fil
     Run evaluations using either the refusal or safety metric.
     """
     eval_file = BENCHMARKS[benchmark]["evaluation"].format(defense=defense, model=model)
-    if benchmark in {"or-bench-hard-1k", "xstest-safe"} and defense != "SmoothLLM":
+    if benchmark in {"or-bench-hard-1k", "xstest-safe"} and defense != "smoothllm":
         refusal_eval(completions_file, eval_file)
     else:
         safety_eval(completions_file, eval_file, prompt_col)
@@ -206,7 +205,7 @@ def process_benchmark_for_model(benchmark: str, defense: str, model_name: str, m
 
     print(f"Processing benchmark '{benchmark}' for model '{model_name}' with defense '{defense}'")
 
-    if defense == "SmoothLLM":
+    if defense == "smoothllm":
         conv_template = ConvTemplates()
         llm_instance = CustomLLM(
             model_path=model_path,
@@ -224,7 +223,7 @@ def process_benchmark_for_model(benchmark: str, defense: str, model_name: str, m
     else:
         max_model_len = 16384 if "phi-4-14b" in model_name else None
         llm_instance = LLM(
-            model_path=model_path,
+            model=model_path,
             device=DEVICE,
             dtype="bfloat16",
             tensor_parallel_size=1,
@@ -240,16 +239,15 @@ def process_benchmark_for_model(benchmark: str, defense: str, model_name: str, m
     updated_data.to_csv(completion_file, index=False)
     print(f"Completions for {model_name} with {defense} defense on benchmark '{benchmark}' saved to {completion_file}")
 
-    process_evaluation(benchmark, defense, model_name, completion_file, prompt_col)
+    # process_evaluation(benchmark, defense, model_name, completion_file, prompt_col)
 
     cleanup_model(llm_instance)
 
 
 def main() -> None:
     print(f"Using device: {DEVICE}")
-
-    for benchmark in BENCHMARKS:
-        for defense in DEFENSES:
+    for defense in DEFENSES:
+        for benchmark in BENCHMARKS:
             for model_name, model_path in MODELS.items():
                 process_benchmark_for_model(benchmark, defense, model_name, model_path)
         destroy_model_parallel()

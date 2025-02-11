@@ -7,6 +7,7 @@ import numpy as np
 import random
 import string
 
+# Add note that the code was taken from the POATE github
 
 class Prompt:
     def __init__(self, full_prompt, perturbable_prompt, max_new_tokens):
