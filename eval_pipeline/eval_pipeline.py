@@ -21,7 +21,7 @@ DEVICE = "cuda"
 
 MODELS = {
     "gemma2-9b": "/ukp-storage-1/zadorin/spt_llms/weights/gemma-2-9b-it",
-    # "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/weights/phi-4",
+    "phi-4-14b": "/ukp-storage-1/zadorin/spt_llms/weights/phi-4",
     "llama31-8b": "/ukp-storage-1/zadorin/spt_llms/weights/Llama-3.1-8B-Instruct"
 }
 
@@ -47,51 +47,51 @@ SYSTEM_PROMPTS = {
 }
 
 BENCHMARKS = {
-    "advbench": {
-        "input": "./data/ab.csv",
-        "completion": "./completions/ab-{defense}-{model}.csv",
-        "evaluation": "./evaluations/ab-{defense}-{model}-eval.csv",
-        "prompt_col": "prompt"
-    },
-    "or-bench-toxic": {
-        "input": "./data/obt.csv",
-        "completion": "./completions/obt-{defense}-{model}.csv",
-        "evaluation": "./evaluations/obt-{defense}-{model}-eval.csv",
-        "prompt_col": "prompt"
-    },
-    "xstest-unsafe": {
-        "input": "./data/xsu.csv",
-        "completion": "./completions/xsu-{defense}-{model}.csv",
-        "evaluation": "./evaluations/xsu-{defense}-{model}-eval.csv",
-        "prompt_col": "prompt"
-    },
-    "do-not-answer": {
-        "input": "./data/dna.csv",
-        "completion": "./completions/dna-{defense}-{model}.csv",
-        "evaluation": "./evaluations/dna-{defense}-{model}-eval.csv",
-        "prompt_col": "question"
-    },
-    "strong-reject": {
-        "input": "./data/sr.csv",
-        "completion": "./completions/sr-{defense}-{model}.csv",
-        "evaluation": "./evaluations/sr-{defense}-{model}-eval.csv",
-        "prompt_col": "forbidden_prompt"
-    },
-    # "or-bench-hard-1k": {
-    #     "input": "./data/obh.csv",
-    #     "completion": "./completions/obh-{defense}-{model}.csv",
-    #     "evaluation": "./evaluations/obh-{defense}-{model}-eval.csv",
+    # "advbench": {
+    #     "input": "./data/ab.csv",
+    #     "completion": "./completions/ab-{defense}-{model}.csv",
+    #     "evaluation": "./evaluations/ab-{defense}-{model}-eval.csv",
     #     "prompt_col": "prompt"
     # },
-    # "xstest-safe": {
-    #     "input": "./data/xss.csv",
-    #     "completion": "./completions/xss-{defense}-{model}.csv",
-    #     "evaluation": "./evaluations/xss-{defense}-{model}-eval.csv",
+    # "or-bench-toxic": {
+    #     "input": "./data/obt.csv",
+    #     "completion": "./completions/obt-{defense}-{model}.csv",
+    #     "evaluation": "./evaluations/obt-{defense}-{model}-eval.csv",
     #     "prompt_col": "prompt"
-    # }
+    # },
+    # "xstest-unsafe": {
+    #     "input": "./data/xsu.csv",
+    #     "completion": "./completions/xsu-{defense}-{model}.csv",
+    #     "evaluation": "./evaluations/xsu-{defense}-{model}-eval.csv",
+    #     "prompt_col": "prompt"
+    # },
+    # "do-not-answer": {
+    #     "input": "./data/dna.csv",
+    #     "completion": "./completions/dna-{defense}-{model}.csv",
+    #     "evaluation": "./evaluations/dna-{defense}-{model}-eval.csv",
+    #     "prompt_col": "question"
+    # },
+    # "strong-reject": {
+    #     "input": "./data/sr.csv",
+    #     "completion": "./completions/sr-{defense}-{model}.csv",
+    #     "evaluation": "./evaluations/sr-{defense}-{model}-eval.csv",
+    #     "prompt_col": "forbidden_prompt"
+    # },
+    "or-bench-hard-1k": {
+        "input": "./data/obh.csv",
+        "completion": "./completions/obh-{defense}-{model}.csv",
+        "evaluation": "./evaluations/obh-{defense}-{model}-eval.csv",
+        "prompt_col": "prompt"
+    },
+    "xstest-safe": {
+        "input": "./data/xss.csv",
+        "completion": "./completions/xss-{defense}-{model}.csv",
+        "evaluation": "./evaluations/xss-{defense}-{model}-eval.csv",
+        "prompt_col": "prompt"
+    }
 }
 
-DEFENSES = ["smoothllm"]
+DEFENSES = ["no", "smoothllm"]
 
 def create_prompt(prompt: str, model_name: str, output: str = None) -> str:
     """
