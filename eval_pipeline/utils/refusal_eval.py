@@ -77,7 +77,6 @@ def evaluate_model(completions_path, output_path, api_key, openai_model, test_si
     df.to_csv(output_path, index=False)
     print(f"Evaluation results saved to {output_path}")
 
-
 def refusal_eval(defense, dataset, model, test_size=None,
                  api_key= "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",
                  openai_model="gpt-4o-mini"):
@@ -106,4 +105,4 @@ def refusal_eval(defense, dataset, model, test_size=None,
 
 
 if __name__ == "__main__":
-    refusal_eval(defense="no", dataset="xss", model="gemma2-9b")
+    refusal_eval(defense="smoothllm", dataset="obh", model="llama31-8b")

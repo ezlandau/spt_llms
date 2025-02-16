@@ -77,18 +77,24 @@ BENCHMARKS = {
     #     "evaluation": "./evaluations/sr-{defense}-{model}-eval.csv",
     #     "prompt_col": "forbidden_prompt"
     # },
-    "or-bench-hard-1k": {
-        "input": "./data/obh.csv",
-        "completion": "./completions/obh-{defense}-{model}.csv",
-        "evaluation": "./evaluations/obh-{defense}-{model}-eval.csv",
+    "deep-inception": {
+        "input": "./data/di.csv",
+        "completion": "./completions/di-{defense}-{model}.csv",
+        "evaluation": "./evaluations/di-{defense}-{model}-eval.csv",
         "prompt_col": "prompt"
     },
-    "xstest-safe": {
-        "input": "./data/xss.csv",
-        "completion": "./completions/xss-{defense}-{model}.csv",
-        "evaluation": "./evaluations/xss-{defense}-{model}-eval.csv",
-        "prompt_col": "prompt"
-    }
+    # "or-bench-hard-1k": {
+    #     "input": "./data/obh.csv",
+    #     "completion": "./completions/obh-{defense}-{model}.csv",
+    #     "evaluation": "./evaluations/obh-{defense}-{model}-eval.csv",
+    #     "prompt_col": "prompt"
+    # },
+    # "xstest-safe": {
+    #     "input": "./data/xss.csv",
+    #     "completion": "./completions/xss-{defense}-{model}.csv",
+    #     "evaluation": "./evaluations/xss-{defense}-{model}-eval.csv",
+    #     "prompt_col": "prompt"
+    # }
 }
 
 DEFENSES = ["no", "smoothllm"]
@@ -134,13 +140,16 @@ def create_prompt(prompt: str, model_name: str, output: str = None) -> str:
     return conv.get_prompt()
 
 
-def generate_responses(llm_instance, model_name: str, data: pd.DataFrame, prompt_col: str) -> pd.DataFrame:
+def generate_responses(llm_instance, benchmark, model_name: str, data: pd.DataFrame, prompt_col: str) -> pd.DataFrame:
     """
     Generate responses using the standard LLM pipeline.
     """
+
+    max_tokens = 2048 if benchmark == "deep-inception" else 512
+
     prompts = data[prompt_col].apply(lambda prompt: create_prompt(prompt, model_name)).tolist()
     sampling_params = SamplingParams(
-        max_tokens=512,
+        max_tokens=max_tokens,
         temperature=0,  # Deterministic output
         seed=42,
         top_p=1.0,
@@ -233,13 +242,13 @@ def process_benchmark_for_model(benchmark: str, defense: str, model_name: str, m
             gpu_memory_utilization=0.95,
             max_model_len=max_model_len
         )
-        updated_data = generate_responses(llm_instance, model_name, data, prompt_col)
+        updated_data = generate_responses(llm_instance, benchmark, model_name, data, prompt_col)
 
     completion_file = config["completion"].format(defense=defense, model=model_name)
     updated_data.to_csv(completion_file, index=False)
     print(f"Completions for {model_name} with {defense} defense on benchmark '{benchmark}' saved to {completion_file}")
 
-    # process_evaluation(benchmark, defense, model_name, completion_file, prompt_col)
+    process_evaluation(benchmark, defense, model_name, completion_file, prompt_col)
 
     cleanup_model(llm_instance)
 
