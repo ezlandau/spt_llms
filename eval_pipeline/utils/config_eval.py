@@ -15,6 +15,7 @@ class ConvTemplates:
     template_names: ClassVar[Dict[str, str]] = {
         "llama31-8b": "llama-3",
         "gemma2-9b": "gemma",
+        "phi4-14b": "phi-4"
     }
 
     def get_template_name(self, model_name: str) -> str:

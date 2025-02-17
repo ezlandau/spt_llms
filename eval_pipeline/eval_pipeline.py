@@ -97,7 +97,7 @@ BENCHMARKS = {
     # }
 }
 
-DEFENSES = ["no", "smoothllm"]
+DEFENSES = ["smoothllm"]
 
 def create_prompt(prompt: str, model_name: str, output: str = None) -> str:
     """
@@ -162,7 +162,7 @@ def generate_responses(llm_instance, benchmark, model_name: str, data: pd.DataFr
     return data
 
 
-def smoothllm_responses(smoothllm_instance, model_name: str, data: pd.DataFrame, prompt_col: str) -> pd.DataFrame:
+def smoothllm_responses(smoothllm_instance, benchmark, model_name: str, data: pd.DataFrame, prompt_col: str) -> pd.DataFrame:
     """
     Generate responses using SmoothLLM. This implementation processes prompts one-by-one.
     If SmoothLLM supports batching, replace this loop with a batch call.
@@ -170,7 +170,8 @@ def smoothllm_responses(smoothllm_instance, model_name: str, data: pd.DataFrame,
     generated_texts = {}
     prompts = data[prompt_col].tolist()
     for i, prompt in tqdm(enumerate(prompts), total=len(prompts), desc="Processing SmoothLLM responses"):
-        full_prompt = Prompt(create_prompt(prompt, model_name), prompt, 512)
+        max_new_tokens = 2048 if benchmark == "deep-inception" else 512
+        full_prompt = Prompt(create_prompt(prompt, model_name), prompt, max_new_tokens)
         _, _, output = smoothllm_instance(full_prompt)
         generated_texts[i] = output
     data["completion"] = generated_texts
@@ -228,7 +229,7 @@ def process_benchmark_for_model(benchmark: str, defense: str, model_name: str, m
             pert_pct=10,
             num_copies=10
         )
-        updated_data = smoothllm_responses(smoothllm_instance, model_name, data, prompt_col)
+        updated_data = smoothllm_responses(smoothllm_instance, benchmark, model_name, data, prompt_col)
     else:
         max_model_len = 16384 if "phi-4-14b" in model_name else None
         llm_instance = LLM(
@@ -251,6 +252,7 @@ def process_benchmark_for_model(benchmark: str, defense: str, model_name: str, m
     process_evaluation(benchmark, defense, model_name, completion_file, prompt_col)
 
     cleanup_model(llm_instance)
+
 
 
 def main() -> None:

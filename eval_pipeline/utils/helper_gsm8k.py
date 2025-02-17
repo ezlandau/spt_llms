@@ -22,6 +22,7 @@ SYSTEM_PROMPTS = {
     )
 }
 
+
 def create_prompt(prompt: str, model_name: str, output: str = None) -> str:
     """
     Create a formatted prompt based on the model's requirements.
@@ -83,7 +84,7 @@ class CustomLM(DeepEvalBaseLLM):
             pert_pct=10,
             num_copies=10
         )
-        full_prompt = Prompt(create_prompt(prompt, "llama31-8b"), prompt, 1300)
+        full_prompt = Prompt(create_prompt(prompt, "phi-4-14b"), prompt, 1300)
         # print("Full prompt:\n", full_prompt.full_prompt)
         _, _, output = smoothllm_instance(full_prompt)
         # print("Raw output:\n", output)
@@ -122,24 +123,24 @@ class CustomLM(DeepEvalBaseLLM):
 conv_templates = ConvTemplates()
 
 model = CustomLLM(
-            model_path="/ukp-storage-1/zadorin/spt_llms/weights/Llama-3.1-8B-Instruct",
-            tokenizer_path="/ukp-storage-1/zadorin/spt_llms/weights/Llama-3.1-8B-Instruct",
-            conv_template_name=conv_templates.get_template_name("gemma"),
+            model_path="/ukp-storage-1/zadorin/spt_llms/weights/phi-4",
+            tokenizer_path="/ukp-storage-1/zadorin/spt_llms/weights/phi-4",
+            conv_template_name=conv_templates.get_template_name("gemma2-9b"),
             device='cuda:0'
         )
-tokenizer = AutoTokenizer.from_pretrained("/ukp-storage-1/zadorin/spt_llms/weights/Llama-3.1-8B-Instruct")
+tokenizer = AutoTokenizer.from_pretrained("/ukp-storage-1/zadorin/spt_llms/weights/phi-4")
 
 phi4 = CustomLM(model=model, tokenizer=tokenizer)
 
 benchmark_gsm8k = GSM8K(
-    n_problems=100,
+    n_problems=300,
     n_shots=8,
     enable_cot=True
 )
 
 results_gsm8k = benchmark_gsm8k.evaluate(model=phi4)
-benchmark_gsm8k.predictions.to_csv("./gsm8k-smoothllm-llama31-eval.csv")
-pd.DataFrame({'Metric': ["result"], 'Value': [results_gsm8k]}).to_csv('./gsm8k-smoothllm-llama31-result.csv', index=False)
+benchmark_gsm8k.predictions.to_csv("./gsm8k-smoothllm-phi4-eval.csv")
+pd.DataFrame({'Metric': ["result"], 'Value': [results_gsm8k]}).to_csv('./gsm8k-smoothllm-phi4-result.csv', index=False)
 #
 # model = AutoModelForCausalLM.from_pretrained("/ukp-storage-1/zadorin/spt_llms/weights/Llama-3.1-8B-Instruct")
 # tokenizer = AutoTokenizer.from_pretrained("/ukp-storage-1/zadorin/spt_llms/weights/Llama-3.1-8B-Instruct")

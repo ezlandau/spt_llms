@@ -2,6 +2,7 @@ import re
 
 import pandas as pd
 from deepeval.benchmarks import MMLU
+from deepeval.benchmarks.mmlu.task import MMLUTask
 from deepeval.benchmarks.schema import MultipleChoiceSchema
 from deepeval.benchmarks.tasks import MMLUTask
 from deepeval.models.base_model import DeepEvalBaseLLM
@@ -135,7 +136,7 @@ conv_templates = ConvTemplates()
 model = CustomLLM(
             model_path="/ukp-storage-1/zadorin/spt_llms/weights/phi-4",
             tokenizer_path="/ukp-storage-1/zadorin/spt_llms/weights/phi-4",
-            conv_template_name=conv_templates.get_template_name("gemma"),
+            conv_template_name=conv_templates.get_template_name("gemma2-9b"),
             device='cuda:0'
         )
 tokenizer = AutoTokenizer.from_pretrained("/ukp-storage-1/zadorin/spt_llms/weights/phi-4")
@@ -144,6 +145,8 @@ gemma2 = CustomLM(model, tokenizer=tokenizer)
 
 benchmark_mmlu_gemma2 = MMLU(
     n_shots=5,
+    tasks=[MMLUTask.HIGH_SCHOOL_EUROPEAN_HISTORY, MMLUTask.HIGH_SCHOOL_US_HISTORY, MMLUTask.GLOBAL_FACTS, MMLUTask.ANATOMY,
+           MMLUTask.COLLEGE_BIOLOGY, MMLUTask.COMPUTER_SECURITY]
 )
 
 results_mmlu_gemma2 = benchmark_mmlu_gemma2.evaluate(model=gemma2)
