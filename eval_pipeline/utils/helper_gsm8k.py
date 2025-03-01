@@ -133,7 +133,7 @@ tokenizer = AutoTokenizer.from_pretrained("/ukp-storage-1/zadorin/spt_llms/weigh
 phi4 = CustomLM(model=model, tokenizer=tokenizer)
 
 benchmark_gsm8k = GSM8K(
-    n_problems=300,
+    n_problems=500,
     n_shots=8,
     enable_cot=True
 )

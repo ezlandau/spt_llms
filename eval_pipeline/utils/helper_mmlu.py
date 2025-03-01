@@ -145,8 +145,6 @@ gemma2 = CustomLM(model, tokenizer=tokenizer)
 
 benchmark_mmlu_gemma2 = MMLU(
     n_shots=5,
-    tasks=[MMLUTask.HIGH_SCHOOL_EUROPEAN_HISTORY, MMLUTask.HIGH_SCHOOL_US_HISTORY, MMLUTask.GLOBAL_FACTS, MMLUTask.ANATOMY,
-           MMLUTask.COLLEGE_BIOLOGY, MMLUTask.COMPUTER_SECURITY]
 )
 
 results_mmlu_gemma2 = benchmark_mmlu_gemma2.evaluate(model=gemma2)
