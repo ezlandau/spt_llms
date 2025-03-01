@@ -1,2 +1,3 @@
 weights
 eval_pipeline/data/*
+*.xml
