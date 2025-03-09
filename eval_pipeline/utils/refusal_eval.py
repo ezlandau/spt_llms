@@ -77,21 +77,19 @@ def evaluate_model(completions_path, output_path, api_key, openai_model, test_si
     df.to_csv(output_path, index=False)
     print(f"Evaluation results saved to {output_path}")
 
-def refusal_eval(defense, dataset, model, test_size=None,
-                        api_key="OPENAI_KEY",
-                     openai_model="gpt-4o-mini"):
-    """
-    Builds the input and output file paths from the provided defense, dataset, and model names,
-    then runs the refusal evaluation.
+def refusal_eval(completions_path: str, output_path: str, api_key: str, openai_model: str, test_size=None):
+    evaluate_model(
+        completions_path=completions_path,
+        output_path=output_path,
+        api_key=api_key,
+        openai_model=openai_model,
+        test_size=test_size
+    )
 
-    Parameters:
-      defense: a string representing the defense strategy.
-      dataset: a string representing the dataset name.
-      model: a string representing the model name.
-      test_size: if provided, only process the first test_size rows (useful for testing).
-      api_key: your OpenAI API key.
-      openai_model: the OpenAI model to use.
-    """
+# If running refusals directly
+def refusal_eval_standalone(defense, dataset, model, test_size=None,
+                        api_key="API_KEY",
+                     openai_model="gpt-4o-mini"):
     completions_path = f"../completions/{dataset}-{defense}-{model}.csv"
     output_path = f"../evaluations/REFUSAL{dataset}-{defense}-{model}-eval.csv"
 
@@ -103,6 +101,12 @@ def refusal_eval(defense, dataset, model, test_size=None,
         test_size=test_size
     )
 
-
 if __name__ == "__main__":
-    refusal_eval(defense="smoothllm", dataset="obh", model="llama31-8b")
+    # refusal_eval_standalone(defense="srd", dataset="xss", model="gemma2-9b")
+    refusal_eval_standalone(defense="srd", dataset="xss", model="gemma2-9b")
+    print("xss for gemma completed")
+    refusal_eval_standalone(defense="srd", dataset="xss", model="llama31-8b")
+    print("xss for llama completed")
+    refusal_eval_standalone(defense="srd", dataset="xss", model="phi-4-14b")
+    print("xss for phi completed")
+    # refusal_eval_standalone(defense="srd", dataset="obh", model="phi-4-14b")

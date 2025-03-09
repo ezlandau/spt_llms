@@ -1,3 +1,4 @@
 weights
 eval_pipeline/data/*
 .idea/*
+*.sh
