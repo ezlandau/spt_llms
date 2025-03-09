@@ -1,4 +1,7 @@
+eval_pipeline/completions
+eval_pipeline/evaluations
+eval_pipeline/perfevals
+eval_pipeline/data
 weights
-eval_pipeline/data/*
 .idea/*
 *.sh
