@@ -25,7 +25,7 @@ def safety_eval(csv_path):
     df["is_benign_safe"] = df["benign_prompt"].apply(evaluate_safety)
     df["is_harmful_safe"] = df["harmful_prompt"].apply(evaluate_safety)
 
-    df.to_csv("NEW_outputs_safetyeval.csv", index=False)
+    df.to_csv("sensitive_words.csv", index=False)
 
 
-safety_eval("NEW_outputs.csv")
+safety_eval("sensitive_words.csv")
