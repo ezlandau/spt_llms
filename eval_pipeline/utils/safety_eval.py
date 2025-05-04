@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 
-def evaluate_safety(chat, server_url="http://scratchy:8000/v1/chat/completions"):
+def evaluate_safety(chat, server_url="http://localhost:8000/v1/chat/completions"):
     payload = {
         "model": "meta-llama/Llama-Guard-3-8B",
         "messages": chat,
