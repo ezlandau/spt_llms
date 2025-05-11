@@ -5,3 +5,4 @@ eval_pipeline/data
 weights
 .idea/*
 *.sh
+/sensitive_words/test.py

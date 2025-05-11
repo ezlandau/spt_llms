@@ -260,3 +260,49 @@ def process_sensitive_words_csv(input_csv: str, output_csv: str, max_rows: int =
 if __name__ == "__main__":
     # Process the sensitive_words.csv dataset, updating up to 400 rows (set max_rows to None to process all rows)
     process_sensitive_words_csv("sensitive_words.csv", "new_outputs.csv", max_rows=400)
+
+
+# Define LoRA parameters
+peft_config = LoraConfig(
+lora_alpha=args.lora_alpha,
+lora_dropout=args.lora_dropout,
+r=args.lora_r,
+bias=args.bias,
+task_type="CAUSAL_LM",
+target_modules= [
+# "q_proj",
+# "v_proj",
+"o_proj",
+"qkv_proj",
+"gate_up_proj",
+"down_proj"
+],
+)
+print(model)
+model = get_peft_model(model, peft_config)
+model.print_trainable_parameters()
+
+training_arguments = TrainingArguments(
+output_dir=args.output_dir,
+per_device_train_batch_size=args.per_device_train_batch_size,
+gradient_accumulation_steps=args.gradient_accumulation_steps,
+optim=args.optim,
+num_train_epochs=args.num_train_epochs,
+logging_steps=args.logging_steps,
+learning_rate=args.learning_rate,
+fp16=False,
+max_grad_norm=args.max_grad_norm,
+warmup_ratio=args.warmup_ratio,
+group_by_length=True,
+lr_scheduler_type=args.lr_scheduler_type,
+)
+
+trainer = SFTTrainer(
+model=model,
+train_dataset=dataset,
+peft_config=peft_config,
+dataset_text_field="text",
+max_seq_length=args.max_seq_length,
+tokenizer=tokenizer,
+args=training_arguments,
+)
