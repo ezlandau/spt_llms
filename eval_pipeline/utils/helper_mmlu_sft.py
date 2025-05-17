@@ -8,12 +8,13 @@ SYSTEM_PROMPTS = {
     "llama31-8b": "Answer with a single letter: A, B, C, or D. Do not include any punctuation or extra text."
 }
 
+
 class CustomLM(DeepEvalBaseLLM):
     def __init__(
         self,
         model_id: str,
         tokenizer_id: str,
-        model_name: str,
+        model_name: str,            # ex: "llama31-8b"
         device: str = "cuda:0",
     ):
         self.device     = device
@@ -22,7 +23,11 @@ class CustomLM(DeepEvalBaseLLM):
         tok = AutoTokenizer.from_pretrained(tokenizer_id, use_fast=False)
         if isinstance(tok, bool):
             tok = AutoTokenizer.from_pretrained(tokenizer_id, use_fast=True)
-        self.tokenizer = tok
+
+        if getattr(tok, "pad_token", None) is None:
+            tok.add_special_tokens({"pad_token": tok.eos_token})
+        if hasattr(tok, "padding_side"):
+            tok.padding_side = "left"
 
         model = AutoModelForCausalLM.from_pretrained(
             model_id,
@@ -30,7 +35,9 @@ class CustomLM(DeepEvalBaseLLM):
             device_map="auto",
         )
         model.resize_token_embeddings(len(tok))
-        self.model = model
+
+        self.tokenizer = tok
+        self.model     = model
 
     def load_model(self):
         return self.model
@@ -42,7 +49,7 @@ class CustomLM(DeepEvalBaseLLM):
         sys_p = SYSTEM_PROMPTS.get(self.model_name, "")
         full  = sys_p + "\n\n" + prompt + "\nAnswer:"
 
-        inputs = self.tokenizer(full, return_tensors="pt").to(dev)
+        inputs = self.tokenizer(full, return_tensors="pt", padding=True).to(dev)
 
         outputs = lm.generate(
             **inputs,
@@ -51,12 +58,13 @@ class CustomLM(DeepEvalBaseLLM):
             top_p=None,
             temperature=None,
             eos_token_id=self.tokenizer.eos_token_id,
+            pad_token_id=self.tokenizer.eos_token_id,
         )
 
         prompt_len = inputs["input_ids"].shape[-1]
         new_id     = outputs[0, prompt_len].item()
 
-        raw = self.tokenizer.decode([new_id], skip_special_tokens=True).strip().upper()
+        raw        = self.tokenizer.decode([new_id], skip_special_tokens=True).strip().upper()
         return MultipleChoiceSchema(answer=raw)
 
     async def a_generate(self, prompt: str) -> MultipleChoiceSchema:
@@ -68,18 +76,18 @@ class CustomLM(DeepEvalBaseLLM):
 
 if __name__ == "__main__":
     llama31 = CustomLM(
-        model_id="/ukp-storage-1/zadorin/spt_llms/weights/Llama-3.1-8B-Instruct",
-        tokenizer_id="/ukp-storage-1/zadorin/spt_llms/weights/Llama-3.1-8B-Instruct",
+        model_id="ez-landau/SFT-SW-Llama-3.1-8B-Instruct-NOTEST_LORA_SW",
+        tokenizer_id="ez-landau/SFT-SW-Llama-3.1-8B-Instruct-NOTEST_LORA_SW",
         model_name="llama31-8b",
         device="cuda:0",
     )
 
     benchmark = MMLU(
-        n_shots=5
+        n_shots=5,
     )
     result = benchmark.evaluate(model=llama31)
 
-    benchmark.predictions.to_csv("./mmlu-llama31-8b-eval.csv", index=False)
+    benchmark.predictions.to_csv("./mmlu-llama31-8b-lora-sft-eval.csv", index=False)
     pd.DataFrame({"Metric": ["MMLU"], "Value": [result]}).to_csv(
-        "./mmlu-llama31-8b-result.csv", index=False
+        "./mmlu-llama31-8b-lora-sft-result.csv", index=False
     )
