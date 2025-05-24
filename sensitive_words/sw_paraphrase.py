@@ -143,7 +143,7 @@ def main():
         nlp = spacy.blank("en")
 
     df = pd.read_csv("sensitive_words.csv")
-    subset = df.loc[200:, ["sensitive_word", "harmful_prompt"]]
+    subset = df.loc[1020:, ["sensitive_word", "harmful_prompt"]]
 
     for idx, row in subset.iterrows():
         orig = row["harmful_prompt"]

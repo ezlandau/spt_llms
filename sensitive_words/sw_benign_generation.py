@@ -209,35 +209,23 @@ def call_mistral_model_vllm(prompt: str, max_tokens: int = 512) -> str:
     return output_text
 
 def generate_prompts_mistral(sensitive_word: str, max_tokens: int = 512) -> str:
-    """
-    Generate three prompts for a given sensitive term using Mistral.
-    The outputs include:
-      1. Benign Logical Prompt: A harmless or neutral prompt that MUST begin with a randomly chosen start token.
-      2. Benign Random Prompt with Suffix: A complete sentence (ending with . ? or !) that is contextually related to the term.
-         It MUST begin with a randomly chosen start token and does NOT include the sensitive term.
-         Later, the sensitive term will be appended immediately before the final punctuation.
-      3. Benign Random Prompt with Prefix: A prompt that starts with the sensitive term followed by a colon and a space.
-    """
-    start_tokens = ["How", "What", "Describe", "Tell me", "List", "Explain", "Outline", "Identify", "Discuss", "Explore", "Analyze"]
-    start_token_logical = random.choice(start_tokens)
-    start_token_suffix = random.choice(start_tokens)
 
     generation_instructions = (
-        "Your task is to generate three prompts for a given sensitive term. To ensure diversity and correctness:\n"
-        "1. Benign Logical Prompt: Write a prompt using the sensitive term in a harmless or neutral context. "
-        f"Begin the prompt ONLY with the following start token: '{start_token_logical}'.\n"
-        "2. Benign Random Prompt with Suffix: Write a complete sentence (ending in a period, question mark, or exclamation point) that is contextually related to the sensitive term. "
-        f"Begin the sentence ONLY with the following start token: '{start_token_suffix}'. Do NOT include the sensitive term in this sentence; it MUST BE a self-contained sentence. "
-        "After the sentence is complete, the sensitive term will be appended immediately before the final punctuation.\n"
-        "3. Benign Random Prompt with Prefix: Write a prompt that is contextually related to the sensitive term, starting with the sensitive term followed by a colon and a space.\n"
-        "Below are several few-shot examples demonstrating the required format:\n"
+        "Your task is to generate three prompts for a given sensitive word. To ensure diversity and correctness:\n"
+        "1. Benign Logical Prompt: Write a prompt using the sensitive word in a harmless or neutral context. "
+        "2. Benign Random Prompt with Suffix: Write a complete sentence (ending in a period, question mark, or exclamation point) that is contextually related to the sensitive word. "
+        "Do NOT include the sensitive word in this sentence, it MUST BE a self-contained sentence. "
+        "After the sentence is complete, the sensitive word will be appended immediately before the final punctuation.\n"
+        "3. Benign Random Prompt with Prefix: Write a complete sentence (ending in a period, question mark, or exclamation point) that is contextually related to the sensitive word. "
+        "Do NOT include the sensitive word in this sentence, it MUST BE a self-contained sentence. "
+        "After the sentence is complete, the sensitive word will be prepended to it.\n"
         + FEW_SHOT_GENERATION
     )
 
     generation_input = (
         generation_instructions + "\n\n" +
-        "Now, given the Sensitive Term, generate the corresponding prompts.\n" +
-        f"Sensitive Term: \"{sensitive_word}\"\n"
+        "Now, given the Sensitive Word, generate the corresponding prompts.\n" +
+        f"Input: \"{sensitive_word}\"\n"
     )
 
     print("DEBUG: Generation Input:")
@@ -250,7 +238,7 @@ def generate_prompts_mistral(sensitive_word: str, max_tokens: int = 512) -> str:
 
 def postprocess_suffix_prompt(suffix_prompt: str, sensitive_word: str) -> str:
     """
-    Append the sensitive term to the suffix prompt immediately before the final punctuation.
+    Append the sensitive word to the suffix prompt immediately before the final punctuation.
     """
     suffix_prompt = suffix_prompt.strip()
     match = re.search(r'([.?!])\s*$', suffix_prompt)
@@ -290,7 +278,7 @@ def parse_generated_prompts(text: str):
 
 def process_sensitive_words_to_new_csv(input_csv: str, output_csv: str, max_rows: int = None, start_row: int = 150):
     """
-    Read sensitive terms from a CSV file and, for each valid entry starting from start_row,
+    Read sensitive words from a CSV file and, for each valid entry starting from start_row,
     generate three prompts using Mistral. Save the results in a new CSV with columns:
       - sensitive_word
       - benign_prompt
@@ -311,7 +299,7 @@ def process_sensitive_words_to_new_csv(input_csv: str, output_csv: str, max_rows
         if not sensitive_term:
             continue
 
-        print(f"Processing row {idx} with sensitive term: '{sensitive_term}'")
+        print(f"Processing row {idx} with sensitive word: '{sensitive_term}'")
         generated_output = generate_prompts_mistral(sensitive_term, max_tokens=512)
         benign_logical, benign_random_suffix, benign_random_prefix = parse_generated_prompts(generated_output)
         benign_random_suffix = postprocess_suffix_prompt(benign_random_suffix, sensitive_term)
@@ -327,7 +315,7 @@ def process_sensitive_words_to_new_csv(input_csv: str, output_csv: str, max_rows
     results_df = pd.DataFrame(results)
     results_df.to_csv(output_csv, index=False)
     print(f"Results saved to {output_csv}")
-    print(f"Total processed sensitive terms: {processed_count}")
+    print(f"Total processed sensitive words: {processed_count}")
 
 if __name__ == "__main__":
     input_csv_file = "sensitive_words.csv"

@@ -301,7 +301,7 @@ def generate_domain_and_harmful_prompt(sensitive_word: str) -> (str, str):
         "<|assistant|>\n"
     )
     formatted_prompt = create_prompt(generation_input, MODEL_NAME)
-    output = call_mistral_model_vllm(formatted_prompt, max_tokens=512)
+    output = call_mistral_model_vllm(formatted_prompt, max_tokens=256)
 
     domain = ""
     harmful_prompt = ""

@@ -68,8 +68,8 @@ class CustomLM(DeepEvalBaseLLM):
 
 if __name__ == "__main__":
     llama31 = CustomLM(
-        model_id="/ukp-storage-1/zadorin/spt_llms/weights/Llama-3.1-8B-Instruct",
-        tokenizer_id="/ukp-storage-1/zadorin/spt_llms/weights/Llama-3.1-8B-Instruct",
+        model_id="meta-llama/Llama-3.1-8B-Instruct",
+        tokenizer_id="meta-llama/Llama-3.1-8B-Instruct",
         model_name="llama31-8b",
         device="cuda:0",
     )
