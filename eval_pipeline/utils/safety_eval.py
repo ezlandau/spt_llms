@@ -15,7 +15,6 @@ def evaluate_safety(chat, server_url="http://localhost:8000/v1/chat/completions"
 def safety_eval(completions_path, output_path, prompt_col):
     df = pd.read_csv(completions_path)
 
-    # Use empty string for missing completions
     df["completion"] = df["completion"].fillna("")
 
     def get_safety_label(row):
@@ -27,7 +26,6 @@ def safety_eval(completions_path, output_path, prompt_col):
 
     df["safety_score"] = df.apply(get_safety_label, axis=1)
 
-    # Calculate refusal scores based on safety scores
     df["refusal_score"] = df["safety_score"].apply(lambda x: 1 if x == 1 else 0)
 
     df.to_csv(output_path, index=False)

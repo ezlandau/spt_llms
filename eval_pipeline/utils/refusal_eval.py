@@ -103,16 +103,5 @@ def refusal_eval_standalone(defense, dataset, model, test_size=None,
     )
 
 if __name__ == "__main__":
-    # refusal_eval_standalone(defense="srd", dataset="obh", model="gemma2-9b", test_size=2)
-    # refusal_eval_standalone(defense="srd", dataset="obh", model="gemma2-9b")
-    # print("obh for gemma completed")
     refusal_eval_standalone(defense="srd", dataset="obh", model="llama31-8b", test_size=2)
     print("obh for llama completed")
-    # refusal_eval_standalone(defense="srd", dataset="obh", model="phi-4-14b")
-    # print("obh for phi completed")
-    # refusal_eval_standalone(defense="icd", dataset="obh", model="gemma2-9b")
-    # print("icd obh for gemma completed")
-    # refusal_eval_standalone(defense="icd", dataset="obh", model="llama31-8b")
-    # print("icd obh for llama completed")
-    # refusal_eval_standalone(defense="icd", dataset="obh", model="phi-4-14b")
-    # print("icd obh for phi completed")

@@ -2,6 +2,8 @@ import torch
 from fastchat.model import get_conversation_template
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
+# Adjusted code from https://github.com/UKPLab/arxiv2025-poate-attack/tree/main/poate_attack/defenses
+
 class LLM:
 
     """Forward pass through a LLM."""

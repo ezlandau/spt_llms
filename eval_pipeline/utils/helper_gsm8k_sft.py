@@ -14,7 +14,6 @@ class StopAfterAnswer(StoppingCriteria):
         self.tokenizer = tokenizer
         self.stop_ids = tokenizer.encode(stop_seq, add_special_tokens=False)
     def __call__(self, input_ids, scores, **kwargs):
-        # Check if last tokens match "Answer:"
         if input_ids[0, -len(self.stop_ids):].tolist() == self.stop_ids:
             return True
         return False
@@ -68,7 +67,6 @@ class CustomLM(DeepEvalBaseLLM):
 
         inputs = self.tokenizer(full_prompt, return_tensors="pt", padding=True).to(dev)
 
-        # 1) sample 10 full chains
         outputs = lm.generate(
             **inputs,
             max_new_tokens=512,
@@ -86,7 +84,6 @@ class CustomLM(DeepEvalBaseLLM):
             gen_tokens = seq[input_length:]
             text = self.tokenizer.decode(gen_tokens, skip_special_tokens=True)
             print("GENERATED ONLY:", text, "\n\n")
-            # 2) regex-extract the first number after "Answer:"
             pattern = re.compile(
                 r"answer\b.*?(-?\d+(?:\.\d+)?)",
                 re.IGNORECASE | re.DOTALL
@@ -100,10 +97,8 @@ class CustomLM(DeepEvalBaseLLM):
             else:
                 answers.append(0)
 
-        # 4) vote for the most common
         most_common, _ = Counter(answers).most_common(1)[0]
 
-        # 5) wrap and return
         return NumberSchema(answer=int(most_common))
 
     async def a_generate(self, prompt: str) -> NumberSchema:

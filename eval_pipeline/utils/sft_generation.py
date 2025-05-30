@@ -4,7 +4,6 @@ import time
 from openai import OpenAI
 from tqdm import tqdm
 
-# Core generation function
 def generate_sft(input_path: str,
                  output_path: str,
                  api_key: str,
@@ -14,16 +13,13 @@ def generate_sft(input_path: str,
     Reads a CSV with a 'prompt' column, queries the OpenAI model, and writes out a new CSV
     with an added 'response' column.
     """
-    # Initialize client for each run to respect isolated calls
     client = OpenAI(api_key=api_key)
 
-    # Read data
     df = pd.read_csv(input_path)
     if test_size is not None:
         df = df.head(test_size)
 
     responses = []
-    # Iterate prompts and collect model outputs
     for prompt in tqdm(df['prompt'], desc=f"Generating responses from {os.path.basename(input_path)}"):
         try:
             completion = client.chat.completions.create(
@@ -35,10 +31,8 @@ def generate_sft(input_path: str,
         except Exception as e:
             text = f"<ERROR: {e}>"
         responses.append(text)
-        # simple rate-limit
         time.sleep(0.5)
 
-    # Add and save
     df['response'] = responses
     df.to_csv(output_path, index=False)
     print(f"Saved responses to {output_path}")
@@ -61,7 +55,6 @@ def generate_sft_standalone(dataset: str,
 
 
 if __name__ == "__main__":
-    # Full dataset generation
     for ds in ["sw_benign", "sw_harmful", "sw_prefix", "sw_suffix"]:
         generate_sft_standalone(ds)
     print("All datasets processed.")
