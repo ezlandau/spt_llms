@@ -15,7 +15,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, LogitsProcessorLis
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)s:%(message)s",
-    level=logging.INFO,  # only INFO+ and above
+    level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 logger = logging.getLogger(__name__)
@@ -50,8 +50,7 @@ model = AutoModelForCausalLM.from_pretrained(
     max_memory=get_max_memory(),
 )
 
-# ——— GLOBALS —————————————————————————————————————————————
-EXCLUDE_THRESHOLD = 20
+EXCLUDE_THRESHOLD = 90
 FORBIDDEN_STARTS = set()
 START_COUNTS     = Counter()
 

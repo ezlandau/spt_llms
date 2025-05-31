@@ -46,3 +46,19 @@ To run the code, ensure you have Python 3.8+:
 2. Install dependencies:  
    ```bash
    pip install -r requirements.txt
+   
+## Citation
+
+If you use this code in your work, please cite:
+
+```bibtex
+@mastersthesis{zadorin2025safety,
+  author       = {Zadorin, Egor},
+  title        = {Safety–Performance Trade‐off in Aligned Language Models},
+  school       = {Technical University of Darmstadt},
+  year         = {2025},
+  type         = {Master's Thesis},
+  address      = {Darmstadt, Germany}
+}
+
+
