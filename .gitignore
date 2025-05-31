@@ -1,4 +1,7 @@
 eval_pipeline/completions
+eval_pipeline/evaluations
+eval_pipeline/perfevals
+
 weights
 .idea/*
 *.sh
